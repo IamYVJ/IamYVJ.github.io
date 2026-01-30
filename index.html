@@ -138,6 +138,7 @@
       gap: 1.25rem;
       font-size: 0.9rem;
       font-weight: 400;
+      align-items: center;
     }
 
     .nav-links a {
@@ -174,6 +175,49 @@
       width: 100%;
     }
 
+    /* LinkedIn Icon in Nav */
+    .linkedin-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      vertical-align: middle;
+      transition: transform 0.2s ease-out;
+    }
+
+    .linkedin-icon:hover {
+      transform: scale(1.1);
+    }
+
+    /* Mobile menu toggle */
+    .mobile-menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      padding: 8px;
+      background: none;
+      border: none;
+    }
+
+    .mobile-menu-toggle span {
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    .mobile-menu-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .mobile-menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-menu-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+
     main {
       margin-top: 0;
     }
@@ -205,6 +249,12 @@
       height: 2px;
       background: var(--accent);
       border-radius: 1px;
+    }
+
+    h3 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--text);
     }
 
     /* Scroll reveal */
@@ -394,6 +444,18 @@
       gap: 1.5rem;
     }
 
+    .grid-3-fixed {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+
     .stack {
       display: flex;
       flex-direction: column;
@@ -520,6 +582,128 @@
     .badge:hover {
       border-color: var(--accent);
       color: var(--text);
+    }
+
+    /* Travel Stats */
+    .travel-intro {
+      background: var(--card);
+      border: 1px solid rgba(26, 26, 26, 0.6);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease-out;
+    }
+
+    .travel-intro:hover {
+      border-color: rgba(34, 197, 94, 0.4);
+    }
+
+    .travel-intro p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .travel-intro p:last-child {
+      margin-bottom: 0;
+    }
+
+    .travel-highlight {
+      background: var(--card);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      transition: all 0.3s ease-out;
+    }
+
+    .travel-highlight:hover {
+      border-color: rgba(34, 197, 94, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .travel-highlight-value {
+      font-size: 3rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+
+    .travel-highlight-label {
+      font-size: 1.125rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .travel-highlight-detail {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid rgba(26, 26, 26, 0.6);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s ease-out;
+      text-align: center;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(34, 197, 94, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .stat-card.featured {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .stat-card.featured:hover {
+      border-color: rgba(34, 197, 94, 0.5);
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-detail {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .stat-detail.fun {
+      color: var(--accent);
+      font-style: italic;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      font-style: italic;
     }
 
     /* Skills */
@@ -679,14 +863,14 @@
         display: none;
       }
 
-      /* Add outer padding/margin for mobile */
+      /* Remove body padding on mobile */
       body {
-        padding: 1rem;
+        padding: 0;
       }
 
       .hero {
-        padding: 2rem 0;
-        min-height: calc(100vh - 2rem);
+        padding: 2rem 1.5rem;
+        min-height: 100vh;
       }
 
       .hero-content {
@@ -715,12 +899,39 @@
         grid-template-columns: 1fr;
       }
 
-      .nav-links {
-        display: none;
+      .grid-3-fixed {
+        grid-template-columns: 1fr;
       }
 
+      .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      /* Mobile Navigation */
       .nav {
-        padding: 0.75rem 0;
+        padding: 1rem 1.5rem;
+      }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.98);
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.5rem;
+        border-bottom: 1px solid rgba(26, 26, 26, 0.5);
+        align-items: flex-start;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .mobile-menu-toggle {
+        display: flex;
       }
 
       .metric-grid {
@@ -753,7 +964,7 @@
       }
 
       .container {
-        padding: 0 0 2rem;
+        padding: 0 1.5rem 2rem;
       }
 
       .skills-grid {
@@ -781,16 +992,36 @@
         font-size: 0.8rem;
         bottom: 1.5rem;
       }
+
+      .travel-intro {
+        padding: 1.5rem;
+      }
+
+      .travel-highlight {
+        padding: 1.5rem;
+      }
+
+      .travel-highlight-value {
+        font-size: 2.25rem;
+      }
+
+      .travel-highlight-label {
+        font-size: 1rem;
+      }
+
+      .stat-card {
+        padding: 1.25rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 0.75rem;
-      }
-
       .hero {
-        min-height: calc(100vh - 1.5rem);
-        padding: 1.5rem 0;
+        min-height: 100vh;
+        padding: 1.5rem 1rem;
       }
 
       .hero-title {
@@ -800,6 +1031,18 @@
       .btn {
         padding: 0.65rem 1.25rem;
         font-size: 0.9rem;
+      }
+
+      .grid-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 0 1rem 2rem;
+      }
+
+      .nav {
+        padding: 1rem;
       }
     }
   </style>
@@ -820,7 +1063,15 @@
   <header id="mainHeader">
     <nav class="nav">
       <a href="#top" class="nav-title">Yashvardhan Jain</a>
-      <div class="nav-links">
+
+      <!-- Mobile menu toggle -->
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links" id="navLinks">
         <a href="#experience" data-section="experience">Experience</a>
         <a href="#projects" data-section="projects">Projects</a>
         <a href="#education" data-section="education">Education</a>
@@ -828,6 +1079,11 @@
         <a href="#travel" data-section="travel">Travel</a>
         <a href="#hobbies" data-section="hobbies">Hobbies</a>
         <a href="#contact" data-section="contact">Contact</a>
+        <!-- <a href="https://linkedin.com/in/yashvardhanjain-yvj" target="_blank" aria-label="LinkedIn Profile">
+          <svg class="linkedin-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a> -->
       </div>
     </nav>
   </header>
@@ -1086,7 +1342,7 @@
       <!-- Education -->
       <section id="education" class="reveal">
         <h2>Education</h2>
-        
+
         <div class="edu-card">
           <div class="edu-header">
             <div class="edu-degree">B.Sc. (Hons) in Computer Science and Entrepreneurship</div>
@@ -1131,8 +1387,8 @@
           <div class="skills-group">
             <div class="skills-group-title">Programming & Data</div>
             <div class="skills-list">
-              <span>Python (expert)</span>
-              <span>SQL (expert)</span>
+              <span>Python</span>
+              <span>SQL</span>
               <span>Java</span>
               <span>R</span>
               <span>JavaScript</span>
@@ -1186,16 +1442,154 @@
       <!-- Travel -->
       <section id="travel" class="reveal">
         <h2>Travel</h2>
-        <div class="card">
-          <div class="card-body">
-            <p>
-              Passionate about exploring new places and cultures. Always looking for opportunities to combine work and travel,
-              experiencing different cities while building technology solutions.
-            </p>
-            <p style="margin-top: 1rem;">
-              Based in <strong>Delhi, India</strong> with experience working across international offices and remote teams.
-              Enjoy discovering tech hubs and startup ecosystems while traveling.
-            </p>
+        <p class="section-subtitle">A decade of exploring the world — by land, air, and foot</p>
+
+        <div class="travel-intro">
+          <p>
+            Passionate about exploring new places and cultures. Over the past 10 years, I've turned my curiosity into adventure, 
+            covering distances that most would find hard to imagine—all while building memories across continents, countries, and cities.
+          </p>
+          <p>
+            Based in <strong>Delhi, India</strong>, with experience working across international offices and remote teams. 
+            I enjoy discovering tech hubs, startup ecosystems, and hidden gems while traveling.
+          </p>
+        </div>
+
+        <!-- Hero Stats -->
+        <div class="travel-highlight">
+          <div class="travel-highlight-value">218,372 km</div>
+          <div class="travel-highlight-label">Total Distance Traveled</div>
+          <div class="travel-highlight-detail">
+            That's <strong>5.45× around Earth's equator</strong> • <strong>56.8% of the way to the Moon!</strong>
+          </div>
+        </div>
+
+        <h3>Geographic Footprint</h3>
+        <!-- Row 1: Countries and Amusement Parks -->
+        <div class="grid-2" style="margin-bottom: 1.25rem;">
+          <div class="stat-card">
+            <div class="stat-icon">🌍</div>
+            <div class="stat-value">6</div>
+            <div class="stat-label">Countries Visited</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🎢</div>
+            <div class="stat-value">6</div>
+            <div class="stat-label">Amusement/Theme Parks</div>
+          </div>
+        </div>
+
+        <!-- Row 2: Indian States, UTs, Cities -->
+        <div class="grid-3-fixed">
+          <div class="stat-card">
+            <div class="stat-icon">🗺️</div>
+            <div class="stat-value">20</div>
+            <div class="stat-label">Indian States</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">📍</div>
+            <div class="stat-value">5</div>
+            <div class="stat-label">Indian UTs</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🏙️</div>
+            <div class="stat-value">292</div>
+            <div class="stat-label">Indian Cities/Towns</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">Travel Timeline</h3>
+        <div class="grid-2">
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value">291</div>
+            <div class="stat-label">Days Traveling</div>
+            <div class="stat-detail">Away from home, college, and work locations</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-value">387 days</div>
+            <div class="stat-label">Time in Motion</div>
+            <div class="stat-detail">1.06 years spent traveling</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">By Air</h3>
+        <div class="grid-2">
+          <div class="stat-card">
+            <div class="stat-icon">✈️</div>
+            <div class="stat-value">107+</div>
+            <div class="stat-label">Total Flights</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🕐</div>
+            <div class="stat-value">328 hrs</div>
+            <div class="stat-label">Flight Time</div>
+            <div class="stat-detail">13 days, 15 hours in the air</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">By Road</h3>
+        <div class="stat-card featured" style="margin-bottom: 1.25rem;">
+          <div class="stat-icon">🚗</div>
+          <div class="stat-value">5,978</div>
+          <div class="stat-label">Vehicle Trips</div>
+          <div class="stat-detail">67,840 km • 188 days, 9 hours</div>
+          <div class="stat-detail fun">That's almost 1.7× around the Earth!</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="stat-card">
+            <div class="stat-icon">🛣️</div>
+            <div class="stat-value">85</div>
+            <div class="stat-label">Road Trips</div>
+            <div class="stat-detail">26,543 km • 45 days, 2 hours</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🚂</div>
+            <div class="stat-value">410</div>
+            <div class="stat-label">Train Journeys</div>
+            <div class="stat-detail">6,426 km • 9 days, 2 hours</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">On Foot</h3>
+        <div class="grid-2">
+          <div class="stat-card">
+            <div class="stat-icon">🚶</div>
+            <div class="stat-value">2,126 km</div>
+            <div class="stat-label">Walking Distance</div>
+            <div class="stat-detail">1,123 walks • 157 days, 11 hours</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">👟</div>
+            <div class="stat-value">2.79M</div>
+            <div class="stat-label">Estimated Steps</div>
+            <div class="stat-detail">~106,312 calories burned</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem;">Hiking Adventures</h3>
+        <div class="grid-2">
+          <div class="stat-card">
+            <div class="stat-icon">🥾</div>
+            <div class="stat-value">21.15 km</div>
+            <div class="stat-label">Total Hike Distance</div>
+            <div class="stat-detail">37.31 hours</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">⛰️</div>
+            <div class="stat-value">936 m</div>
+            <div class="stat-label">Total Hike Elevation</div>
+            <div class="stat-detail">3,071 ft • 1.12 Burj Khalifas!</div>
           </div>
         </div>
       </section>
@@ -1204,16 +1598,82 @@
       <section id="hobbies" class="reveal">
         <h2>Hobbies</h2>
         <div class="grid-2">
+          <!-- YouTube Channel -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Circuit Tutorials — YouTube Channel</div>
+                <div class="card-meta">AYJ - Gaurav Yash Jain</div>
+              </div>
+              <span class="pill">20.3K Subs</span>
+            </div>
+            <div class="card-body">
+              <p>
+                Creating electronic circuit tutorials since December 2012. Built a community of 20.3K+ subscribers 
+                with 16 educational videos and 4.3M+ views, sharing knowledge on circuit design and electronics fundamentals.
+              </p>
+              <div class="project-links">
+                <a href="https://www.youtube.com/user/gauravyashjain" target="_blank" class="project-link">Watch Channel ↗</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fitness & Health Tracking -->
           <div class="card">
             <div class="card-title">Fitness & Health Tracking</div>
             <div class="card-body">
               <p>
-                Obsessed with quantified self and wearable technology. Track sleep, workouts, recovery, and HRV to optimize performance.
-                Experiment with Ultrahuman and other fitness tech to understand what actually works.
+                Obsessed with quantified self and wearable technology. Have tried various fitness devices 
+                and currently using Whoop to track sleep, workouts, recovery, and HRV for optimal performance.
               </p>
             </div>
           </div>
 
+          <!-- Pickleball -->
+          <div class="card">
+            <div class="card-title">Pickleball</div>
+            <div class="card-body">
+              <p>
+                Regular pickleball player who recently discovered this fun sport. Actively participating in tournaments 
+                and working on improving my DUPR rating while enjoying the competitive and social aspects of the game.
+              </p>
+            </div>
+          </div>
+
+          <!-- Content Hog -->
+          <div class="card">
+            <div class="card-title">Content Hog</div>
+            <div class="card-body">
+              <p>
+                Love watching thrillers, sci-fi, mystery, adventure, and action content. Big binge-watcher who can't stop at cliffhangers. 
+                Sometimes watch at 2x speed. Have a Dolby Atmos voice-automated projector setup for the ultimate viewing experience.
+              </p>
+            </div>
+          </div>
+
+          <!-- Live Music -->
+          <div class="card">
+            <div class="card-title">Live Singing Shows & Concerts</div>
+            <div class="card-body">
+              <p>
+                Big music lover who enjoys live singing night outs. Attended concerts of Arijit Singh, Honey Singh, 
+                Coldplay (twice), Maroon 5, Ed Sheeran, Sunidhi Chauhan, and Sonu Nigam.
+              </p>
+            </div>
+          </div>
+
+          <!-- Cricket -->
+          <div class="card">
+            <div class="card-title">India Cricket</div>
+            <div class="card-body">
+              <p>
+                Religiously follow Indian cricket. Love watching and attending matches at stadiums. 
+                Watched all matches of India in the World Cup 2023 across India at all stadiums—an unforgettable journey through the tournament.
+              </p>
+            </div>
+          </div>
+
+          <!-- Home Automation & IoT -->
           <div class="card">
             <div class="card-title">Home Automation & IoT</div>
             <div class="card-body">
@@ -1224,22 +1684,13 @@
             </div>
           </div>
 
+          <!-- Gaming -->
           <div class="card">
             <div class="card-title">Gaming</div>
             <div class="card-body">
               <p>
                 Enjoy multiplayer shooters and competitive gaming with friends. Appreciate well-designed game mechanics
                 and the intersection of technology and entertainment.
-              </p>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">Sci-Fi & Tech Culture</div>
-            <div class="card-body">
-              <p>
-                Fan of Star Trek Discovery, The Matrix, Interstellar, and other sci-fi that explores how technology shapes society.
-                Always exploring new AI tools and keeping up with the latest tech developments.
               </p>
             </div>
           </div>
@@ -1265,7 +1716,12 @@
         <div class="contact-row">
           <div class="contact-item">
             <div class="contact-label">LinkedIn</div>
-            <a href="https://linkedin.com/in/yashvardhanjain-yvj" target="_blank">linkedin.com/in/yashvardhanjain-yvj</a>
+            <a href="https://linkedin.com/in/yashvardhanjain-yvj" target="_blank" style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg class="linkedin-icon" viewBox="0 0 24 24" fill="currentColor" style="width: 24px; height: 24px;">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              linkedin.com/in/yashvardhanjain-yvj
+            </a>
           </div>
         </div>
       </section>
@@ -1278,6 +1734,23 @@
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Mobile menu toggle
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    mobileMenuToggle.addEventListener('click', () => {
+      mobileMenuToggle.classList.toggle('active');
+      navLinks.classList.toggle('active');
+    });
+
+    // Close mobile menu when clicking a link
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenuToggle.classList.remove('active');
+        navLinks.classList.remove('active');
+      });
+    });
 
     // Show header after scrolling past hero
     const header = document.getElementById("mainHeader");
@@ -1300,11 +1773,11 @@
 
     function updateScrollDots() {
       let currentIndex = 0;
-      
+
       sections.forEach((section, index) => {
         const sectionTop = section.offsetTop;
         const sectionHeight = section.clientHeight;
-        
+
         if (window.scrollY >= sectionTop - 200) {
           currentIndex = index;
         }
@@ -1337,20 +1810,20 @@
     }
 
     // Active section highlighting (scroll spy)
-    const navLinks = document.querySelectorAll(".nav-links a[data-section]");
+    const navLinksList = document.querySelectorAll(".nav-links a[data-section]");
 
     function updateActiveLink() {
       let currentSection = "";
-      
+
       sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        
+
         if (window.scrollY >= sectionTop - 150) {
           currentSection = section.getAttribute("id");
         }
       });
 
-      navLinks.forEach(link => {
+      navLinksList.forEach(link => {
         link.classList.remove("active");
         if (link.getAttribute("data-section") === currentSection) {
           link.classList.add("active");
