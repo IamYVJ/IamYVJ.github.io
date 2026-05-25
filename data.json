@@ -1,0 +1,106 @@
+{
+  "travel": {
+    "highlight": {
+      "value": "218,372 km",
+      "label": "Total Distance Traveled",
+      "detail": "That's <strong>5.45× around Earth's equator</strong> • <strong>56.8% of the way to the Moon!</strong>"
+    },
+    "sections": [
+      {
+        "title": "Geographic Footprint",
+        "rows": [
+          {
+            "layout": "grid-2",
+            "style": "margin-bottom: 1.25rem;",
+            "cards": [
+              { "icon": "🌍", "value": "6",   "label": "Countries Visited" },
+              { "icon": "🎢", "value": "6",   "label": "Amusement/Theme Parks" }
+            ]
+          },
+          {
+            "layout": "grid-3-fixed",
+            "cards": [
+              { "icon": "🗺️", "value": "20",  "label": "Indian States" },
+              { "icon": "📍", "value": "5",   "label": "Indian UTs" },
+              { "icon": "🏙️", "value": "292", "label": "Indian Cities/Towns" }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Travel Timeline",
+        "rows": [
+          {
+            "layout": "grid-2",
+            "cards": [
+              { "icon": "📅", "value": "291",      "label": "Days Traveling", "detail": "Away from home, college, and work locations" },
+              { "icon": "⏱️", "value": "387 days", "label": "Time in Motion", "detail": "1.06 years spent traveling" }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "By Air",
+        "rows": [
+          {
+            "layout": "grid-2",
+            "cards": [
+              { "icon": "✈️", "value": "107+",    "label": "Total Flights" },
+              { "icon": "🕐", "value": "328 hrs", "label": "Flight Time", "detail": "13 days, 15 hours in the air" }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "By Road",
+        "rows": [
+          {
+            "layout": "single",
+            "style": "margin-bottom: 1.25rem;",
+            "cards": [
+              {
+                "featured": true,
+                "icon": "🚗",
+                "value": "5,978",
+                "label": "Vehicle Trips",
+                "detail": "67,840 km • 188 days, 9 hours",
+                "detailFun": "That's almost 1.7× around the Earth!"
+              }
+            ]
+          },
+          {
+            "layout": "grid-2",
+            "cards": [
+              { "icon": "🛣️", "value": "85",  "label": "Road Trips",     "detail": "26,543 km • 45 days, 2 hours" },
+              { "icon": "🚂", "value": "410", "label": "Train Journeys", "detail": "6,426 km • 9 days, 2 hours" }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "On Foot",
+        "rows": [
+          {
+            "layout": "grid-2",
+            "cards": [
+              { "icon": "🚶", "value": "2,126 km", "label": "Walking Distance", "detail": "1,123 walks • 157 days, 11 hours" },
+              { "icon": "👟", "value": "2.79M",    "label": "Estimated Steps",  "detail": "~106,312 calories burned" }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Hiking Adventures",
+        "rows": [
+          {
+            "layout": "grid-2",
+            "cards": [
+              { "icon": "🥾", "value": "21.15 km", "label": "Total Hike Distance",  "detail": "37.31 hours" },
+              { "icon": "⛰️", "value": "936 m",    "label": "Total Hike Elevation", "detail": "3,071 ft • 1.12 Burj Khalifas!" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
