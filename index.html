@@ -856,6 +856,24 @@
       font-size: 0.875rem;
     }
 
+    /* Visitor counter — fine print under the content, matching footer.
+       No `display` here on purpose: the [hidden] attribute must stay in charge
+       so an eaten request never flashes a bare "—" to the visitor. */
+    .visitor-counter {
+      padding: 0 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    /* Pull the footnote up out of .container's 4rem bottom padding so it reads as
+       the next line after the content, not a detached block. Scoped with :has()
+       to the padded .container wrapper, so it can never fire behind the
+       full-screen .hero variant and drag the footnote over live content. */
+    main:has(> .container) > .visitor-counter {
+      margin-top: -1rem;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       /* Hide scroll dots on mobile to avoid obstruction */
@@ -2010,6 +2028,10 @@
         </div>
       </section>
     </div>
+
+    <p class="visitor-counter" hidden>
+      <span id="visitor-count" class="visitor-count">—</span> visitors
+    </p>
   </main>
 
   <footer>
@@ -2181,6 +2203,67 @@
         document.querySelector(".hero").classList.add("visible");
       }, 100);
     });
+
+    // ── Visitor counter (GoatCounter) ──────────────────────────────────────
+    // Purely decorative. Every failure path — adblocker, offline load, or the
+    // "Allow adding visitor counts" setting being off — leaves the footnote
+    // hidden rather than showing a broken "— visitors".
+    function showVisitorCount() {
+      const box = document.querySelector(".visitor-counter");
+      const out = document.getElementById("visitor-count");
+      if (!box || !out) return;
+
+      // Derive the host from the beacon tag so the site code lives in one place.
+      const tag = document.querySelector("script[data-goatcounter]");
+      const endpoint = tag && tag.dataset.goatcounter;
+      if (!endpoint) return;
+
+      // pathname only, deliberately WITHOUT location.search. There is no
+      // <link rel="canonical">, so count.js files the pageview under pathname
+      // (+ search) — for the clean root URL "/" the two match. A visitor arriving
+      // with a tracking param (?fbclid=…) still sees the aggregate for the clean
+      // path instead of a 404. pathname is read live: navigation here is hash-only,
+      // so it never changes and always equals what the beacon wrote.
+      const path = window.location.pathname;
+
+      // start= is pinned to a FIXED date predating the first-ever pageview. It does
+      // not change WHAT is counted (all-time is the default) but gives the response
+      // its own cache key: a path with no data yet answers 404, and GoatCounter
+      // caches that 404 for ~4h — so a bare URL could sit on "no data" for hours
+      // after the first real visit lands on a fresh deploy. Never a rolling period
+      // (week/year) — that would silently stop being an all-time count.
+      const START = "2026-01-01";
+
+      // NOTE: GoatCounter caches this response for ~4h, so a fresh visit will not
+      // move the number immediately. That is expected, not a bug.
+      fetch(`${endpoint.replace(/\/count$/, "")}/counter/${encodeURIComponent(path)}.json?start=${START}`)
+        .then((res) => (res.ok ? res.json() : Promise.reject(new Error("bad status"))))
+        .then((data) => {
+          // `count` arrives pre-formatted with thousands separators ("1,234").
+          if (data && data.count != null) {
+            out.textContent = String(data.count);
+            box.hidden = false;
+          }
+        })
+        .catch(() => { /* leave the footnote hidden on every failure */ });
+    }
+
+    // Wait for parse so the beacon <script> just below is in the DOM to read from.
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", showVisitorCount);
+    } else {
+      showVisitorCount();
+    }
+  </script>
+
+  <!-- GoatCounter pageview beacon. Same site across all my projects on purpose —
+       counts are per-path, so each project separates itself via its own pathname.
+       async keeps count.js off the critical path; no service worker, so nothing
+       precaches this host and every beacon reaches the network. -->
+  <script
+    data-goatcounter="https://yvj.goatcounter.com/count"
+    async
+    src="//gc.zgo.at/count.js">
   </script>
 </body>
 </html>
