@@ -557,7 +557,7 @@
 
     .grid-4 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       gap: 1.25rem;
     }
 
@@ -951,6 +951,79 @@
       margin-top: 0.5rem;
     }
 
+    /* Project stats: language split (100% stacked bar + legend) */
+    .lang-split {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .lang-bar {
+      display: flex;
+      gap: 2px;
+      height: 12px;
+      border-radius: 4px;
+      overflow: hidden;
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+    }
+
+    .visible .lang-bar {
+      clip-path: inset(0 0 0 0);
+    }
+
+    .lang-seg {
+      min-width: 3px;
+      transition: opacity 0.2s ease-out;
+    }
+
+    .lang-legend {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.5rem;
+      margin-top: 1.25rem;
+      padding: 0;
+    }
+
+    .lang-legend li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text);
+      transition: opacity 0.2s ease-out;
+    }
+
+    .lang-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    .lang-pct {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lang-split.is-focus .lang-seg:not(.on),
+    .lang-split.is-focus .lang-legend li:not(.on) {
+      opacity: 0.3;
+    }
+
+    .stats-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+
+    .featured-heading {
+      margin-top: 2.5rem;
+    }
+
     .section-subtitle {
       font-size: 0.95rem;
       color: var(--muted);
@@ -1317,7 +1390,8 @@
       }
 
       .grid-4 {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
       }
 
       .container {
@@ -1343,6 +1417,11 @@
 
       h2::after {
         transform: none;
+        transition: none;
+      }
+
+      .lang-bar {
+        clip-path: none;
         transition: none;
       }
 
@@ -1424,7 +1503,7 @@
           </div>
           <div class="readout-cell">
             <div class="readout-label">Projects</div>
-            <div class="readout-value"><span data-count>25</span><span class="readout-unit">+</span></div>
+            <div class="readout-value"><span data-count>70</span><span class="readout-unit">+</span></div>
           </div>
           <div class="readout-cell">
             <div class="readout-label">Interests</div>
@@ -1521,13 +1600,16 @@
       <!-- Projects -->
       <section id="projects" class="reveal">
         <h2><span class="sec-idx" aria-hidden="true">02</span>Projects</h2>
+        <div id="project-stats"><!-- populated from data.json --></div>
+
+        <h3 class="featured-heading">Featured Projects</h3>
         <div class="grid-3">
           <!-- Playground (hub) -->
           <div class="card">
             <div class="card-header">
               <div>
                 <div class="card-title">Playground</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JS</span></div>
               </div>
               <span class="pill">Showcase</span>
@@ -1633,7 +1715,6 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Sequence</div>
-                <div class="card-meta">Updated Sep 2026</div>
                 <div class="chips"><span class="chip">JavaScript</span><span class="chip">WebRTC</span><span class="chip">PWA</span></div>
               </div>
               <span class="pill">Game</span>
@@ -1657,7 +1738,6 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Local Avalon</div>
-                <div class="card-meta">Updated Jun 2026</div>
                 <div class="chips"><span class="chip">JavaScript</span><span class="chip">WebRTC</span><span class="chip">PWA</span></div>
               </div>
               <span class="pill">Game</span>
@@ -1681,7 +1761,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Palate</div>
-                <div class="card-meta">MIT · Updated Sep 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span><span class="chip">PWA</span></div>
               </div>
               <span class="pill">Food</span>
@@ -1728,7 +1808,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">JSON Explorer</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Dev Tool</span>
@@ -1746,7 +1826,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">localmafia</div>
-                <div class="card-meta">MIT · Updated Feb 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
@@ -1808,7 +1888,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">picklelog</div>
-                <div class="card-meta">MIT · Updated Mar 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Sports</span>
@@ -1826,7 +1906,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">password-generator</div>
-                <div class="card-meta">MIT · Updated Mar 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">CSS</span></div>
               </div>
               <span class="pill">Utility</span>
@@ -1844,7 +1924,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">prowordle</div>
-                <div class="card-meta">MIT · Updated Feb 2026</div>
+                <div class="card-meta">MIT</div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1860,7 +1940,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Dicer</div>
-                <div class="card-meta">MIT · Updated Feb 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Utility</span>
@@ -1878,7 +1958,6 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Amazon Order Statistics</div>
-                <div class="card-meta">Updated Sep 2022</div>
                 <div class="chips"><span class="chip">Python</span></div>
               </div>
               <span class="pill">Analytics</span>
@@ -1899,7 +1978,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">World Time</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">HTML</span></div>
               </div>
               <span class="pill">Utility</span>
@@ -1917,7 +1996,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Smart Code</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Utility</span>
@@ -1935,7 +2014,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Data Transformer</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Dev Tool</span>
@@ -1953,7 +2032,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Sankey Studio</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Dataviz</span>
@@ -1988,7 +2067,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Local Codenames</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
@@ -2006,7 +2085,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Local Fish Bowl</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
@@ -2024,7 +2103,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Local Secret Hitler</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
@@ -2042,7 +2121,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Wavelength</div>
-                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">HTML</span></div>
               </div>
               <span class="pill">Game</span>
@@ -2060,7 +2139,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Gamut</div>
-                <div class="card-meta">MIT · Updated May 2026</div>
+                <div class="card-meta">MIT</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
@@ -2078,7 +2157,6 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Tic Tac Toe</div>
-                <div class="card-meta">Updated Jun 2026</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
@@ -2095,7 +2173,6 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Pig Game</div>
-                <div class="card-meta">Updated Jun 2026</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
@@ -2113,7 +2190,6 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Guess the Number</div>
-                <div class="card-meta">Updated Jun 2026</div>
                 <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
@@ -2439,61 +2515,115 @@
 
     watchCounts(document);
 
-    // Travel stats — loaded from data.json so metrics are easy to update
-    (async function loadTravel() {
-      const mount = document.getElementById("travel-stats");
-      if (!mount) return;
+    // Travel and project stats — loaded from data.json so metrics are easy to update
+    (async function loadStats() {
+      const travelMount = document.getElementById("travel-stats");
+      const projectMount = document.getElementById("project-stats");
+
+      const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => (
+        { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]
+      ));
+
+      const cardHtml = (c) => `
+        <div class="stat-card${c.featured ? " featured" : ""}">
+          <div class="stat-icon">${esc(c.icon)}</div>
+          <div class="stat-value">${esc(c.value)}</div>
+          <div class="stat-label">${esc(c.label)}</div>
+          ${c.detail ? `<div class="stat-detail">${esc(c.detail)}</div>` : ""}
+          ${c.detailFun ? `<div class="stat-detail fun">${esc(c.detailFun)}</div>` : ""}
+        </div>`;
+
+      const rowHtml = (r) => {
+        const style = r.style ? ` style="${esc(r.style)}"` : "";
+        const cards = (r.cards || []).map(cardHtml).join("");
+        if (r.layout === "single") {
+          // single card rendered without a grid wrapper
+          return r.style
+            ? `<div${style}>${cards}</div>`
+            : cards;
+        }
+        return `<div class="${esc(r.layout)}"${style}>${cards}</div>`;
+      };
+
+      const sectionHtml = (s, i) => {
+        const headingStyle = i === 0 ? "" : ' style="margin-top: 2.5rem;"';
+        const rows = (s.rows || []).map(rowHtml).join("");
+        return (s.title ? `<h3${headingStyle}>${esc(s.title)}</h3>` : "") + rows;
+      };
+
+      const highlightHtml = (h = {}) => `
+        <div class="travel-highlight">
+          <div class="travel-highlight-value">${esc(h.value)}</div>
+          <div class="travel-highlight-label">${esc(h.label)}</div>
+          ${h.detail ? `<div class="travel-highlight-detail">${h.detail}</div>` : ""}
+        </div>`;
+
+      // 100% stacked bar + legend. Each language carries its own colour in
+      // data.json, so a colour stays with its language if the ranking changes.
+      const languagesHtml = (l) => {
+        const items = l.items || [];
+        const pct = (it) => Number(it.percent).toFixed(1) + "%";
+        const summary = items.map((it) => `${it.name} ${pct(it)}`).join(", ");
+        const segs = items.map((it) => `
+          <span class="lang-seg" data-lang="${esc(it.name)}" title="${esc(it.name)} · ${pct(it)}"
+                style="flex-basis: ${Number(it.percent)}%; background: ${esc(it.color)};"></span>`).join("");
+        const legend = items.map((it) => `
+          <li data-lang="${esc(it.name)}">
+            <span class="lang-swatch" style="background: ${esc(it.color)};"></span>
+            <span class="lang-name">${esc(it.name)}</span>
+            <span class="lang-pct">${pct(it)}</span>
+          </li>`).join("");
+        return `
+          <h3 style="margin-top: 2.5rem;">${esc(l.title)}</h3>
+          <div class="lang-split">
+            <div class="lang-bar" role="img" aria-label="${esc(summary)}">${segs}</div>
+            <ul class="lang-legend">${legend}</ul>
+            ${l.note ? `<p class="stats-note">${esc(l.note)}</p>` : ""}
+          </div>`;
+      };
+
+      // Hovering a bar segment or legend entry highlights that language in both
+      function linkLanguageHover(root) {
+        const split = root.querySelector(".lang-split");
+        if (!split) return;
+        const setFocus = (name) => {
+          split.classList.toggle("is-focus", !!name);
+          split.querySelectorAll("[data-lang]").forEach((el) => {
+            el.classList.toggle("on", el.dataset.lang === name);
+          });
+        };
+        split.addEventListener("pointerover", (e) => {
+          const el = e.target.closest("[data-lang]");
+          setFocus(el ? el.dataset.lang : null);
+        });
+        split.addEventListener("pointerleave", () => setFocus(null));
+      }
+
+      let data;
       try {
         const res = await fetch("data.json", { cache: "no-cache" });
         if (!res.ok) throw new Error("HTTP " + res.status);
-        const data = await res.json();
-        const t = data.travel;
-        if (!t) return;
-
-        const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => (
-          { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]
-        ));
-
-        const cardHtml = (c) => `
-          <div class="stat-card${c.featured ? " featured" : ""}">
-            <div class="stat-icon">${esc(c.icon)}</div>
-            <div class="stat-value">${esc(c.value)}</div>
-            <div class="stat-label">${esc(c.label)}</div>
-            ${c.detail ? `<div class="stat-detail">${esc(c.detail)}</div>` : ""}
-            ${c.detailFun ? `<div class="stat-detail fun">${esc(c.detailFun)}</div>` : ""}
-          </div>`;
-
-        const rowHtml = (r) => {
-          const style = r.style ? ` style="${esc(r.style)}"` : "";
-          const cards = (r.cards || []).map(cardHtml).join("");
-          if (r.layout === "single") {
-            // single card rendered without a grid wrapper
-            return r.style
-              ? `<div${style}>${cards}</div>`
-              : cards;
-          }
-          return `<div class="${esc(r.layout)}"${style}>${cards}</div>`;
-        };
-
-        const sectionHtml = (s, i) => {
-          const headingStyle = i === 0 ? "" : ' style="margin-top: 2.5rem;"';
-          const rows = (s.rows || []).map(rowHtml).join("");
-          return `<h3${headingStyle}>${esc(s.title)}</h3>${rows}`;
-        };
-
-        const h = t.highlight || {};
-        const highlightHtml = `
-          <div class="travel-highlight">
-            <div class="travel-highlight-value">${esc(h.value)}</div>
-            <div class="travel-highlight-label">${esc(h.label)}</div>
-            ${h.detail ? `<div class="travel-highlight-detail">${h.detail}</div>` : ""}
-          </div>`;
-
-        mount.innerHTML = highlightHtml + (t.sections || []).map(sectionHtml).join("");
-        watchCounts(mount);
+        data = await res.json();
       } catch (err) {
-        console.error("Failed to load travel data:", err);
-        mount.innerHTML = '<p style="color: var(--muted);">Travel stats unavailable.</p>';
+        console.error("Failed to load stats data:", err);
+        if (travelMount) travelMount.innerHTML = '<p style="color: var(--muted);">Travel stats unavailable.</p>';
+        return;
+      }
+
+      const t = data.travel;
+      if (travelMount && t) {
+        travelMount.innerHTML = highlightHtml(t.highlight) + (t.sections || []).map(sectionHtml).join("");
+        watchCounts(travelMount);
+      }
+
+      const p = data.projects;
+      if (projectMount && p) {
+        projectMount.innerHTML = highlightHtml(p.highlight)
+          + (p.sections || []).map(sectionHtml).join("")
+          + (p.languages ? languagesHtml(p.languages) : "")
+          + (p.asOf ? `<p class="stats-note">${esc(p.asOf)}</p>` : "");
+        watchCounts(projectMount);
+        linkLanguageHover(projectMount);
       }
     })();
 
