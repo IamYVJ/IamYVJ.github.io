@@ -346,14 +346,46 @@
       width: 100%;
     }
 
-    .hero-name {
-      font-size: 1rem;
-      font-weight: 500;
-      letter-spacing: 0.15em;
+    /* Status pill above the headline */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--muted);
+      padding: 0.45rem 0.95rem;
       margin-bottom: 1.5rem;
-      opacity: 0.9;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(13, 19, 18, 0.65);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+
+    .status-pill strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .status-dot {
+      flex-shrink: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: status-pulse 2s ease-out infinite;
+    }
+
+    @keyframes status-pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6), 0 0 8px rgba(34, 197, 94, 0.9);
+      }
+      100% {
+        box-shadow: 0 0 0 7px rgba(34, 197, 94, 0), 0 0 8px rgba(34, 197, 94, 0.9);
+      }
     }
 
     .hero-title {
@@ -582,6 +614,78 @@
 
     .card:hover .pill {
       background: rgba(34, 197, 94, 0.2);
+    }
+
+    /* Project cards: tech-stack chips */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+      margin-top: 0.6rem;
+    }
+
+    .chip {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      line-height: 1.5;
+      color: var(--muted);
+      padding: 0.1rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.02);
+      transition: border-color 0.2s ease-out, color 0.2s ease-out;
+    }
+
+    #projects .card:hover .chip {
+      color: var(--text);
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    #projects .card-meta {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+    }
+
+    /* Project cards: a border glow and soft spotlight that follow the cursor.
+       --mx/--my are set by JS on pointermove. */
+    #projects .card {
+      position: relative;
+    }
+
+    #projects .card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    #projects .card::before,
+    #projects .card::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease-out;
+    }
+
+    #projects .card::before {
+      background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgba(34, 197, 94, 0.08), transparent 70%);
+    }
+
+    #projects .card::after {
+      padding: 1px;
+      background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(34, 197, 94, 0.85), rgba(45, 212, 191, 0.3) 40%, transparent 70%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+    }
+
+    @media (hover: hover) {
+      #projects .card:hover::before,
+      #projects .card:hover::after {
+        opacity: 1;
+      }
     }
 
     /* Experience timeline: a rail that fills, and nodes that light up, on scroll */
@@ -1044,8 +1148,9 @@
         gap: 2rem;
       }
 
-      .hero-name {
-        font-size: 0.9rem;
+      .status-pill {
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
         margin-bottom: 1rem;
       }
 
@@ -1242,6 +1347,7 @@
       }
 
       .scroll-indicator,
+      .status-dot,
       .timeline > .card:first-child.lit::before {
         animation: none;
       }
@@ -1294,7 +1400,10 @@
     <section class="hero reveal visible" id="top">
       <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
       <div class="hero-content">
-        <div class="hero-name">Yashvardhan Jain</div>
+        <div class="status-pill">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span><strong>Yashvardhan Jain</strong> · BCG · Delhi</span>
+        </div>
         <h1 class="hero-title">
           Building <span class="hero-highlight">data systems</span> that automate work and drive decisions.
         </h1>
@@ -1418,7 +1527,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Playground</div>
-                <div class="card-meta">HTML · CSS · JS · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JS</span></div>
               </div>
               <span class="pill">Showcase</span>
             </div>
@@ -1441,7 +1551,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Propre (Proof of Presence)</div>
-                <div class="card-meta">Blockchain · Bitcoin · Mar 2021 – May 2021</div>
+                <div class="card-meta">Mar 2021 – May 2021</div>
+                <div class="chips"><span class="chip">Blockchain</span><span class="chip">Bitcoin</span></div>
               </div>
               <span class="pill">Blockchain</span>
             </div>
@@ -1465,7 +1576,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">SecureKit</div>
-                <div class="card-meta">PDF Toolkit · Privacy-First</div>
+                <div class="chips"><span class="chip">PDF Toolkit</span><span class="chip">Privacy-First</span></div>
               </div>
               <span class="pill">Utility</span>
             </div>
@@ -1483,7 +1594,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Case Records Automation Tool</div>
-                <div class="card-meta">Power Automate · Power BI</div>
+                <div class="chips"><span class="chip">Power Automate</span><span class="chip">Power BI</span></div>
               </div>
               <span class="pill">Work</span>
             </div>
@@ -1502,7 +1613,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Node6</div>
-                <div class="card-meta">Python · Neo4j · Jul 2020 – Aug 2020</div>
+                <div class="card-meta">Jul 2020 – Aug 2020</div>
+                <div class="chips"><span class="chip">Python</span><span class="chip">Neo4j</span></div>
               </div>
               <span class="pill">Graph DB</span>
             </div>
@@ -1521,7 +1633,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Sequence</div>
-                <div class="card-meta">JavaScript · WebRTC · PWA · Updated Sep 2026</div>
+                <div class="card-meta">Updated Sep 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span><span class="chip">WebRTC</span><span class="chip">PWA</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1544,7 +1657,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Local Avalon</div>
-                <div class="card-meta">JavaScript · WebRTC · PWA · Updated Jun 2026</div>
+                <div class="card-meta">Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span><span class="chip">WebRTC</span><span class="chip">PWA</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1567,7 +1681,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Palate</div>
-                <div class="card-meta">JavaScript · PWA · MIT · Updated Sep 2026</div>
+                <div class="card-meta">MIT · Updated Sep 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span><span class="chip">PWA</span></div>
               </div>
               <span class="pill">Food</span>
             </div>
@@ -1591,7 +1706,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Telegram Court Piece Bot</div>
-                <div class="card-meta">Python · Telegram API · May 2020 – Jun 2020</div>
+                <div class="card-meta">May 2020 – Jun 2020</div>
+                <div class="chips"><span class="chip">Python</span><span class="chip">Telegram API</span></div>
               </div>
               <span class="pill">Bot</span>
             </div>
@@ -1612,7 +1728,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">JSON Explorer</div>
-                <div class="card-meta">JavaScript · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Dev Tool</span>
             </div>
@@ -1629,7 +1746,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">localmafia</div>
-                <div class="card-meta">JavaScript · MIT · Updated Feb 2026</div>
+                <div class="card-meta">MIT · Updated Feb 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1651,7 +1769,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Stock Market Analysis</div>
-                <div class="card-meta">Python · NSE · NYSE · May 2019 – May 2020</div>
+                <div class="card-meta">May 2019 – May 2020</div>
+                <div class="chips"><span class="chip">Python</span><span class="chip">NSE</span><span class="chip">NYSE</span></div>
               </div>
               <span class="pill">Analytics</span>
             </div>
@@ -1669,7 +1788,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">School Library Management System</div>
-                <div class="card-meta">Database · Sep 2015 – Jan 2016</div>
+                <div class="card-meta">Sep 2015 – Jan 2016</div>
+                <div class="chips"><span class="chip">Database</span></div>
               </div>
               <span class="pill">Academic</span>
             </div>
@@ -1688,7 +1808,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">picklelog</div>
-                <div class="card-meta">JavaScript · MIT · Updated Mar 2026</div>
+                <div class="card-meta">MIT · Updated Mar 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Sports</span>
             </div>
@@ -1705,7 +1826,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">password-generator</div>
-                <div class="card-meta">CSS · MIT · Updated Mar 2026</div>
+                <div class="card-meta">MIT · Updated Mar 2026</div>
+                <div class="chips"><span class="chip">CSS</span></div>
               </div>
               <span class="pill">Utility</span>
             </div>
@@ -1738,7 +1860,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Dicer</div>
-                <div class="card-meta">JavaScript · MIT · Updated Feb 2026</div>
+                <div class="card-meta">MIT · Updated Feb 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Utility</span>
             </div>
@@ -1755,7 +1878,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Amazon Order Statistics</div>
-                <div class="card-meta">Python · Updated Sep 2022</div>
+                <div class="card-meta">Updated Sep 2022</div>
+                <div class="chips"><span class="chip">Python</span></div>
               </div>
               <span class="pill">Analytics</span>
             </div>
@@ -1775,7 +1899,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">World Time</div>
-                <div class="card-meta">HTML · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">HTML</span></div>
               </div>
               <span class="pill">Utility</span>
             </div>
@@ -1792,7 +1917,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Smart Code</div>
-                <div class="card-meta">JavaScript · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Utility</span>
             </div>
@@ -1809,7 +1935,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Data Transformer</div>
-                <div class="card-meta">JavaScript · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Dev Tool</span>
             </div>
@@ -1826,7 +1953,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Sankey Studio</div>
-                <div class="card-meta">JavaScript · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Dataviz</span>
             </div>
@@ -1843,7 +1971,7 @@
             <div class="card-header">
               <div>
                 <div class="card-title">FixtureForge</div>
-                <div class="card-meta">HTML · Sports</div>
+                <div class="chips"><span class="chip">HTML</span><span class="chip">Sports</span></div>
               </div>
               <span class="pill">Sports</span>
             </div>
@@ -1860,7 +1988,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Local Codenames</div>
-                <div class="card-meta">JavaScript · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1877,7 +2006,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Local Fish Bowl</div>
-                <div class="card-meta">JavaScript · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1894,7 +2024,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Local Secret Hitler</div>
-                <div class="card-meta">JavaScript · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1911,7 +2042,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Wavelength</div>
-                <div class="card-meta">HTML · MIT · Updated Jun 2026</div>
+                <div class="card-meta">MIT · Updated Jun 2026</div>
+                <div class="chips"><span class="chip">HTML</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1928,7 +2060,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Gamut</div>
-                <div class="card-meta">JavaScript · MIT · Updated May 2026</div>
+                <div class="card-meta">MIT · Updated May 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1945,7 +2078,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Tic Tac Toe</div>
-                <div class="card-meta">JavaScript · Updated Jun 2026</div>
+                <div class="card-meta">Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1961,7 +2095,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Pig Game</div>
-                <div class="card-meta">JavaScript · Updated Jun 2026</div>
+                <div class="card-meta">Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -1978,7 +2113,8 @@
             <div class="card-header">
               <div>
                 <div class="card-title">Guess the Number</div>
-                <div class="card-meta">JavaScript · Updated Jun 2026</div>
+                <div class="card-meta">Updated Jun 2026</div>
+                <div class="chips"><span class="chip">JavaScript</span></div>
               </div>
               <span class="pill">Game</span>
             </div>
@@ -2468,6 +2604,19 @@
       window.addEventListener("resize", queueTimeline);
       window.addEventListener("load", queueTimeline);
       updateTimeline();
+    }
+
+    // Project cards — feed the cursor position to the border glow
+    const projectGrid = document.querySelector("#projects .grid-3");
+
+    if (projectGrid && window.matchMedia("(hover: hover)").matches) {
+      projectGrid.addEventListener("pointermove", (e) => {
+        const card = e.target.closest(".card");
+        if (!card) return;
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mx", (e.clientX - rect.left) + "px");
+        card.style.setProperty("--my", (e.clientY - rect.top) + "px");
+      });
     }
 
     // Hero backdrop — a data-flow graph: pulses travel along pipelines laid out
