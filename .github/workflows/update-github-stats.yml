@@ -5,7 +5,8 @@ name: Update GitHub stats
 #
 # Needs one repository secret, GH_STATS_TOKEN: a fine-grained personal access
 # token for your account with
-#   Repository access: All repositories
+#   Repository access: All repositories   ← not "Public repositories", or the
+#                      14 private repos (and their contributions) are missed
 #   Permissions:       Contents → Read-only, Metadata → Read-only
 # (read-only is enough — the commit below is made with the built-in token).
 # Settings → Secrets and variables → Actions → New repository secret.
@@ -14,6 +15,11 @@ on:
   schedule:
     - cron: "0 3 * * 1"   # Mondays 03:00 UTC (08:30 IST)
   workflow_dispatch:       # "Run workflow" button for a manual refresh
+    inputs:
+      allow_decrease:
+        description: "Allow repo/contribution counts to go down (only if you really deleted repos)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write   # commit the updated data.json / index.html
@@ -38,6 +44,7 @@ jobs:
         env:
           GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
           GH_LOGIN: ${{ github.repository_owner }}
+          ALLOW_DECREASE: ${{ inputs.allow_decrease || false }}
         run: node scripts/update-github-stats.mjs
 
       - name: Commit and push if anything changed

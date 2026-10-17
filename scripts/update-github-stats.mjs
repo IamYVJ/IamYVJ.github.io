@@ -25,9 +25,10 @@ const OTHER_COLOR = "#7a8783";
 // Colours for a language entering the top five that has none in data.json yet,
 // taken in this order (the colour-blind-checked palette used on the site).
 const SPARE_COLORS = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#008300"];
-// Refuse to publish if the repo count falls below this share of the current
-// value — almost always a token that can't see private repos.
-const MIN_REPO_RATIO = 0.8;
+// Repos and all-time contributions only go down if repos are deleted or the
+// token can't see private ones, so a drop stops the run unless this is set
+// (the workflow's "allow_decrease" option on a manual run).
+const ALLOW_DECREASE = process.env.ALLOW_DECREASE === "true";
 
 if (!TOKEN) {
   fail("GH_STATS_TOKEN is not set. Add a read-only personal access token as a repository secret — see the workflow file.");
@@ -152,9 +153,13 @@ async function main() {
   const cards = p.sections.flatMap((s) => s.rows.flatMap((r) => r.cards));
   const card = (key) => cards.find((c) => c.stat === key);
 
-  const currentRepos = Number(String(card("repos")?.value || "0").replace(/,/g, ""));
-  if (repos.length < currentRepos * MIN_REPO_RATIO) {
-    fail(`Only ${repos.length} repos visible (data.json says ${currentRepos}). Check the token can read all your repos, including private ones.`);
+  const current = (key) => Number(String(card(key)?.value || "0").replace(/,/g, ""));
+  const drops = [["repos", repos.length], ["contributions", contributions]]
+    .filter(([key, next]) => next < current(key))
+    .map(([key, next]) => `${key} ${fmt(current(key))} → ${fmt(next)}`);
+  if (drops.length && !ALLOW_DECREASE) {
+    fail(`Counts went down (${drops.join(", ")}). The token probably can't see your private repos — ` +
+      `give it access to all repositories. If the drop is real (e.g. you deleted repos), run the workflow manually with "allow_decrease" ticked.`);
   }
 
   p.highlight.value = fmt(added);
