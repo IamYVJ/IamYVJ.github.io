@@ -1,15 +1,8 @@
 name: Update GitHub stats
 
-# Refreshes the GitHub numbers in data.json (Projects section) and the hero
-# "Projects" readout in index.html every Monday.
-#
-# Needs one repository secret, GH_STATS_TOKEN: a fine-grained personal access
-# token for your account with
-#   Repository access: All repositories   ← not "Public repositories", or the
-#                      14 private repos (and their contributions) are missed
-#   Permissions:       Contents → Read-only, Metadata → Read-only
-# (read-only is enough — the commit below is made with the built-in token).
-# Settings → Secrets and variables → Actions → New repository secret.
+# Refreshes the GitHub stats on the site every Monday.
+# Needs the GH_STATS_TOKEN secret: a fine-grained token with access to all
+# repositories and read-only Contents + Metadata.
 
 on:
   schedule:
@@ -17,7 +10,7 @@ on:
   workflow_dispatch:       # "Run workflow" button for a manual refresh
     inputs:
       allow_decrease:
-        description: "Allow repo/contribution counts to go down (only if you really deleted repos)"
+        description: "Allow counts to go down (only if you deleted repos)"
         type: boolean
         default: false
 
@@ -61,9 +54,7 @@ jobs:
           git push
           echo "pushed=true" >> "$GITHUB_OUTPUT"
 
-      # Pushes made with the built-in token may not trigger a Pages build on
-      # their own, so request one explicitly. Non-fatal: the data is committed
-      # either way and goes live with the next build.
+      # Pushes by the built-in token may not trigger a Pages build on their own
       - name: Rebuild GitHub Pages
         if: steps.commit.outputs.pushed == 'true'
         continue-on-error: true

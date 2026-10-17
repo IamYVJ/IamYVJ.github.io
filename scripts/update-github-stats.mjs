@@ -1,17 +1,14 @@
-// Refreshes the GitHub numbers in the "projects" block of data.json, and the
-// "70+ Projects" readout in the hero of index.html.
-//
-// Runs weekly from .github/workflows/update-github-stats.yml. To run it locally:
+// Refreshes the GitHub numbers in data.json (Projects section) and the hero
+// "Projects" readout in index.html. Run weekly by
+// .github/workflows/update-github-stats.yml; locally:
 //   GH_STATS_TOKEN=<token> node scripts/update-github-stats.mjs
 //
-// Counting matches gitfolio (iamyvj.github.io/gitfolio), where the original
-// numbers came from: repos you own that aren't forks or empty; lines added and
-// removed are your own, from GitHub's contributor statistics; languages are
-// bytes summed across those repos.
+// Counts repos you own that aren't forks or empty, and only your own lines.
+// Nothing is written unless every repo was counted.
 //
-// Only values are rewritten — labels, icons, colours and layout in data.json
-// are left as they are. Nothing is written if any repo can't be counted, so a
-// bad run never publishes partial numbers.
+// This repo is public, so its Actions logs and run summaries are too: they
+// only ever show totals already on the site — never repo names, which could
+// be private.
 
 import { readFile, writeFile } from "node:fs/promises";
 
@@ -39,8 +36,7 @@ if (!TOKEN) {
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const fmt = (n) => n.toLocaleString("en-US");
 
-// In GitHub Actions, also raise the message as an annotation so it shows on
-// the run's summary page (step logs are hidden from signed-out visitors).
+// Shows the message on the run's summary page as well as in the log
 function annotate(level, message) {
   if (process.env.GITHUB_ACTIONS) console.log(`::${level} title=Update GitHub stats::${message}`);
 }
@@ -63,9 +59,12 @@ async function gh(path, { raw = false, method = "GET", body } = {}) {
     }
   });
   if (raw) return res;
-  if (!res.ok) throw new Error(`${method} ${path} → HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  if (!res.ok) throw new Error(`GitHub API request failed (HTTP ${res.status}) for ${redact(path)}`);
   return res.json();
 }
+
+// Hides the repo name in an API path, for error messages
+const redact = (path) => path.replace(/^\/repos\/[^/]+\/[^/?]+/, "/repos/<repo>").replace(/\?.*$/, "");
 
 // Runs fn over items with a small concurrency limit
 async function pool(items, size, fn) {
@@ -99,7 +98,7 @@ async function contributorStats(repo, attempts) {
       continue;
     }
     if (res.status === 204) return { added: 0, deleted: 0 };
-    if (!res.ok) throw new Error(`stats for ${repo.full_name} → HTTP ${res.status}`);
+    if (!res.ok) throw new Error(`Contributor stats request failed (HTTP ${res.status})`);
 
     let added = 0, deleted = 0;
     for (const c of await res.json()) {
@@ -147,15 +146,33 @@ async function allTimeContributions() {
   return Object.values(res.data.user).reduce((sum, y) => sum + y.contributionCalendar.totalContributions, 0);
 }
 
+// What to change when the token can't see private repos, by token type
+function tokenAdvice() {
+  if (TOKEN.startsWith("github_pat_")) {
+    return "Edit the fine-grained token: Repository access → All repositories; Contents and Metadata → Read-only.";
+  }
+  if (TOKEN.startsWith("ghp_")) return "The classic token needs the \"repo\" scope.";
+  return "Use a token that can read all your repositories.";
+}
+
 async function main() {
-  const viewer = await gh("/user");
+  const userRes = await gh("/user", { raw: true });
+  if (!userRes.ok) fail(`GitHub rejected the token (HTTP ${userRes.status}). It may have expired — create a new one and update the GH_STATS_TOKEN secret.`);
+  const viewer = await userRes.json();
   if (viewer.login.toLowerCase() !== LOGIN.toLowerCase()) {
     fail(`The token belongs to ${viewer.login}, not ${LOGIN}.`);
   }
 
   const repos = (await listOwnedRepos()).filter((r) => !r.fork && r.size > 0);
-  const privateCount = repos.filter((r) => r.private).length;
-  console.log(`Counting ${repos.length} repos (${privateCount} private)…`);
+  console.log(`Counting ${repos.length} repos…`);
+
+  // Stop early if the token can't see private repos — the numbers would
+  // otherwise come out public-only.
+  const seesPrivate = repos.some((r) => r.private);
+  const ownedPrivate = viewer.owned_private_repos;
+  if (!seesPrivate && (ownedPrivate > 0 || (ownedPrivate == null && !ALLOW_DECREASE))) {
+    fail(`The token can't see your private repos. ${tokenAdvice()}`);
+  }
 
   // Repos GitHub hasn't counted recently (or that the token can only now see)
   // can take minutes, so sweep the stragglers every 30s for a few minutes.
@@ -163,7 +180,7 @@ async function main() {
   for (let sweep = 0; sweep < STATS_SWEEPS; sweep++) {
     const waiting = repos.filter((_, i) => stats[i] === null);
     if (!waiting.length) break;
-    console.log(`Waiting for GitHub to compute stats for ${waiting.length} repo(s): ${waiting.map((r) => r.name).join(", ")}`);
+    console.log(`Waiting for GitHub to compute stats for ${waiting.length} repo(s)…`);
     await sleep(30000);
     const again = await pool(waiting, 4, (r) => contributorStats(r, 1));
     waiting.forEach((r, j) => { stats[repos.indexOf(r)] = again[j]; });
@@ -174,10 +191,10 @@ async function main() {
   for (const [i, repo] of repos.entries()) {
     if (stats[i] !== null) continue;
     stats[i] = await statsFromCommits(repo);
-    if (stats[i]) annotate("warning", `${repo.name}: GitHub's stats weren't ready, so its lines were added up from individual commits.`);
+    if (stats[i]) console.log("Counted one repo from its individual commits.");
   }
-  const pending = repos.filter((_, i) => stats[i] === null).map((r) => r.name);
-  if (pending.length) fail(`GitHub was still computing stats for: ${pending.join(", ")}. Nothing written — run it again in a few minutes.`);
+  const pending = stats.filter((x) => x === null).length;
+  if (pending) fail(`GitHub was still computing stats for ${pending} repo(s). Nothing written — run it again in a few minutes.`);
 
   const added = stats.reduce((s, x) => s + x.added, 0);
   const deleted = stats.reduce((s, x) => s + x.deleted, 0);
@@ -205,8 +222,8 @@ async function main() {
     .filter(([key, next]) => next < current(key))
     .map(([key, next]) => `${key} ${fmt(current(key))} → ${fmt(next)}`);
   if (drops.length && !ALLOW_DECREASE) {
-    fail(`Counts went down (${drops.join(", ")}). The token probably can't see your private repos — ` +
-      `give it access to all repositories. If the drop is real (e.g. you deleted repos), run the workflow manually with "allow_decrease" ticked.`);
+    fail(`Counts went down (${drops.join(", ")}). If you deleted repos, run it manually with "allow_decrease" ticked; ` +
+      `otherwise check the token. ${tokenAdvice()}`);
   }
 
   p.highlight.value = fmt(added);
@@ -259,9 +276,8 @@ async function main() {
     console.log("index.html: no changes.");
   }
 
-  annotate("notice", `${repos.length} repos (${privateCount} private) · ${fmt(added)} lines added, ` +
-    `${fmt(deleted)} removed · ${fmt(commits)} commits · ${fmt(contributions)} contributions · ` +
-    `${values.languages} languages · hero ${heroValue}+`);
+  annotate("notice", `Updated: ${repos.length} repos · ${fmt(added)} lines added · ${fmt(commits)} commits · ` +
+    `${fmt(contributions)} contributions`);
 }
 
 main().catch((err) => fail(err.message));
