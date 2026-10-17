@@ -29,6 +29,7 @@ const SPARE_COLORS = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#0
 // token can't see private ones, so a drop stops the run unless this is set
 // (the workflow's "allow_decrease" option on a manual run).
 const ALLOW_DECREASE = process.env.ALLOW_DECREASE === "true";
+const STATS_SWEEPS = 16;
 
 if (!TOKEN) {
   fail("GH_STATS_TOKEN is not set. Add a read-only personal access token as a repository secret — see the workflow file.");
@@ -37,8 +38,15 @@ if (!TOKEN) {
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const fmt = (n) => n.toLocaleString("en-US");
 
+// In GitHub Actions, also raise the message as an annotation so it shows on
+// the run's summary page (step logs are hidden from signed-out visitors).
+function annotate(level, message) {
+  if (process.env.GITHUB_ACTIONS) console.log(`::${level} title=Update GitHub stats::${message}`);
+}
+
 function fail(message) {
   console.error("✖ " + message);
+  annotate("error", message);
   process.exit(1);
 }
 
@@ -82,11 +90,11 @@ async function listOwnedRepos() {
 
 // GitHub computes contributor stats on demand: a cold repo answers 202 and is
 // ready a few seconds later, so keep asking for a while.
-async function contributorStats(repo) {
-  for (let attempt = 0; attempt < 10; attempt++) {
+async function contributorStats(repo, attempts) {
+  for (let attempt = 0; attempt < attempts; attempt++) {
     const res = await gh(`/repos/${repo.full_name}/stats/contributors`, { raw: true });
     if (res.status === 202) {
-      await sleep(3000 + attempt * 2000);
+      if (attempt < attempts - 1) await sleep(3000 + attempt * 2000);
       continue;
     }
     if (res.status === 204) return { added: 0, deleted: 0 };
@@ -126,11 +134,22 @@ async function main() {
   }
 
   const repos = (await listOwnedRepos()).filter((r) => !r.fork && r.size > 0);
-  console.log(`Counting ${repos.length} repos…`);
+  const privateCount = repos.filter((r) => r.private).length;
+  console.log(`Counting ${repos.length} repos (${privateCount} private)…`);
 
-  const stats = await pool(repos, 4, contributorStats);
+  // Repos GitHub hasn't counted recently (or that the token can only now see)
+  // can take minutes, so sweep the stragglers every 30s for up to ~8 minutes.
+  const stats = await pool(repos, 4, (r) => contributorStats(r, 3));
+  for (let sweep = 0; sweep < STATS_SWEEPS; sweep++) {
+    const waiting = repos.filter((_, i) => stats[i] === null);
+    if (!waiting.length) break;
+    console.log(`Waiting for GitHub to compute stats for ${waiting.length} repo(s): ${waiting.map((r) => r.name).join(", ")}`);
+    await sleep(30000);
+    const again = await pool(waiting, 4, (r) => contributorStats(r, 1));
+    waiting.forEach((r, j) => { stats[repos.indexOf(r)] = again[j]; });
+  }
   const pending = repos.filter((_, i) => stats[i] === null).map((r) => r.name);
-  if (pending.length) fail(`GitHub was still computing stats for: ${pending.join(", ")}. Nothing written; the next run will retry.`);
+  if (pending.length) fail(`GitHub was still computing stats for: ${pending.join(", ")}. Nothing written — run it again in a few minutes.`);
 
   const added = stats.reduce((s, x) => s + x.added, 0);
   const deleted = stats.reduce((s, x) => s + x.deleted, 0);
@@ -211,6 +230,10 @@ async function main() {
   } else {
     console.log("index.html: no changes.");
   }
+
+  annotate("notice", `${repos.length} repos (${privateCount} private) · ${fmt(added)} lines added, ` +
+    `${fmt(deleted)} removed · ${fmt(commits)} commits · ${fmt(contributions)} contributions · ` +
+    `${values.languages} languages · hero ${heroValue}+`);
 }
 
 main().catch((err) => fail(err.message));
