@@ -174,9 +174,9 @@
   },
   "projects": {
     "highlight": {
-      "value": "1,024,464",
+      "value": "1,058,112",
       "label": "Lines of Code Added",
-      "detail": "<strong>97,936 removed</strong> • <strong>926,528 net</strong> across 70 repositories"
+      "detail": "<strong>98,447 removed</strong> • <strong>959,665 net</strong> across 71 repositories"
     },
     "sections": [
       {
@@ -193,19 +193,20 @@
               {
                 "stat": "commits",
                 "icon": "🔁",
-                "value": "997",
+                "value": "1,002",
                 "label": "Commits"
               },
               {
                 "stat": "contributions",
                 "icon": "📅",
                 "value": "1,084",
-                "label": "Contributions"
+                "label": "Contributions",
+                "offset": 143
               },
               {
                 "stat": "languages",
                 "icon": "🧩",
-                "value": "21",
+                "value": "23",
                 "label": "Languages"
               }
             ]
@@ -215,11 +216,11 @@
     ],
     "languages": {
       "title": "Language Split",
-      "note": "Share of code by size across 70 repositories",
+      "note": "Share of code by size across 71 repositories",
       "items": [
         {
           "name": "JavaScript",
-          "percent": 43.7,
+          "percent": 44,
           "color": "#3987e5"
         },
         {
@@ -229,12 +230,12 @@
         },
         {
           "name": "Python",
-          "percent": 15,
+          "percent": 14.8,
           "color": "#199e70"
         },
         {
           "name": "CSS",
-          "percent": 6.4,
+          "percent": 6.3,
           "color": "#c98500"
         },
         {
