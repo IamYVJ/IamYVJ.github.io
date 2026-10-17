@@ -22,9 +22,8 @@ const OTHER_COLOR = "#7a8783";
 // Colours for a language entering the top five that has none in data.json yet,
 // taken in this order (the colour-blind-checked palette used on the site).
 const SPARE_COLORS = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#008300"];
-// Repos and all-time contributions only go down if repos are deleted or the
-// token can't see private ones, so a drop stops the run unless this is set
-// (the workflow's "allow_decrease" option on a manual run).
+// Published counts never go down unless this is set (the workflow's
+// "allow_decrease" option on a manual run) — see withOffset() in main().
 const ALLOW_DECREASE = process.env.ALLOW_DECREASE === "true";
 const STATS_SWEEPS = 6;              // ×30s of waiting for slow repos
 const COMMIT_FALLBACK_LIMIT = 1000;  // see statsFromCommits()
@@ -218,18 +217,36 @@ async function main() {
   const card = (key) => cards.find((c) => c.stat === key);
 
   const current = (key) => Number(String(card(key)?.value || "0").replace(/,/g, ""));
-  const drops = [["repos", repos.length], ["contributions", contributions]]
-    .filter(([key, next]) => next < current(key))
-    .map(([key, next]) => `${key} ${fmt(current(key))} → ${fmt(next)}`);
-  if (drops.length && !ALLOW_DECREASE) {
-    fail(`Counts went down (${drops.join(", ")}). If you deleted repos, run it manually with "allow_decrease" ticked; ` +
-      `otherwise check the token. ${tokenAdvice()}`);
+  if (repos.length < current("repos") && !ALLOW_DECREASE) {
+    fail(`Repo count went down (${fmt(current("repos"))} → ${fmt(repos.length)}). If you deleted repos, ` +
+      `run it manually with "allow_decrease" ticked; otherwise check the token. ${tokenAdvice()}`);
+  }
+
+  // Commits and contributions can include activity this token can't see
+  // (e.g. private contributions only visible when signed in as you), so the
+  // live count can come out below what's already published. The shortfall is
+  // kept as an "offset" on the card and added to every later count: the
+  // number keeps growing with new activity but never drops.
+  // "allow_decrease" clears the offset.
+  function withOffset(key, live) {
+    const c = card(key);
+    if (!c) return live;
+    let offset = ALLOW_DECREASE ? 0 : c.offset || 0;
+    if (!ALLOW_DECREASE && live + offset < current(key)) offset = current(key) - live;
+    if (offset) c.offset = offset;
+    else delete c.offset;
+    return live + offset;
   }
 
   p.highlight.value = fmt(added);
   p.highlight.detail = `<strong>${fmt(deleted)} removed</strong> • <strong>${fmt(added - deleted)} net</strong> across ${repos.length} repositories`;
 
-  const values = { repos: repos.length, commits, contributions, languages: Object.keys(languageBytes).length };
+  const values = {
+    repos: repos.length,
+    commits: withOffset("commits", commits),
+    contributions: withOffset("contributions", contributions),
+    languages: Object.keys(languageBytes).length
+  };
   for (const [key, value] of Object.entries(values)) {
     if (card(key)) card(key).value = fmt(value);
   }
@@ -257,7 +274,7 @@ async function main() {
   if (out !== raw) {
     await writeFile(DATA_FILE, out);
     console.log(`data.json: ${fmt(added)} added, ${fmt(deleted)} removed, ${repos.length} repos, ` +
-      `${fmt(commits)} commits, ${fmt(contributions)} contributions, ${values.languages} languages.`);
+      `${fmt(values.commits)} commits, ${fmt(values.contributions)} contributions, ${values.languages} languages.`);
   } else {
     console.log("data.json: no changes.");
   }
@@ -276,8 +293,8 @@ async function main() {
     console.log("index.html: no changes.");
   }
 
-  annotate("notice", `Updated: ${repos.length} repos · ${fmt(added)} lines added · ${fmt(commits)} commits · ` +
-    `${fmt(contributions)} contributions`);
+  annotate("notice", `Updated: ${repos.length} repos · ${fmt(added)} lines added · ${fmt(values.commits)} commits · ` +
+    `${fmt(values.contributions)} contributions`);
 }
 
 main().catch((err) => fail(err.message));
