@@ -185,21 +185,25 @@
             "layout": "grid-4",
             "cards": [
               {
+                "stat": "repos",
                 "icon": "📦",
                 "value": "71",
                 "label": "Repositories"
               },
               {
+                "stat": "commits",
                 "icon": "🔁",
                 "value": "997",
                 "label": "Commits"
               },
               {
+                "stat": "contributions",
                 "icon": "📅",
                 "value": "1,084",
                 "label": "Contributions"
               },
               {
+                "stat": "languages",
                 "icon": "🧩",
                 "value": "21",
                 "label": "Languages"

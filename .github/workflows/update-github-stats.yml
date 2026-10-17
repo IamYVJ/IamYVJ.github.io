@@ -1,0 +1,65 @@
+name: Update GitHub stats
+
+# Refreshes the GitHub numbers in data.json (Projects section) and the hero
+# "Projects" readout in index.html every Monday.
+#
+# Needs one repository secret, GH_STATS_TOKEN: a fine-grained personal access
+# token for your account with
+#   Repository access: All repositories
+#   Permissions:       Contents → Read-only, Metadata → Read-only
+# (read-only is enough — the commit below is made with the built-in token).
+# Settings → Secrets and variables → Actions → New repository secret.
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"   # Mondays 03:00 UTC (08:30 IST)
+  workflow_dispatch:       # "Run workflow" button for a manual refresh
+
+permissions:
+  contents: write   # commit the updated data.json / index.html
+  pages: write      # ask GitHub Pages to rebuild after the commit
+
+concurrency:
+  group: update-github-stats
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Recount stats
+        env:
+          GH_STATS_TOKEN: ${{ secrets.GH_STATS_TOKEN }}
+          GH_LOGIN: ${{ github.repository_owner }}
+        run: node scripts/update-github-stats.mjs
+
+      - name: Commit and push if anything changed
+        id: commit
+        run: |
+          if git diff --quiet -- data.json index.html; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data.json index.html
+          git commit -m "Update GitHub stats"
+          git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # Pushes made with the built-in token may not trigger a Pages build on
+      # their own, so request one explicitly. Non-fatal: the data is committed
+      # either way and goes live with the next build.
+      - name: Rebuild GitHub Pages
+        if: steps.commit.outputs.pushed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
