@@ -174,9 +174,9 @@
   },
   "projects": {
     "highlight": {
-      "value": "1,024,464",
+      "value": "743,585",
       "label": "Lines of Code Added",
-      "detail": "<strong>97,936 removed</strong> • <strong>926,528 net</strong> across 70 repositories"
+      "detail": "<strong>54,237 removed</strong> • <strong>689,348 net</strong> across 57 repositories"
     },
     "sections": [
       {
@@ -187,25 +187,25 @@
               {
                 "stat": "repos",
                 "icon": "📦",
-                "value": "71",
+                "value": "57",
                 "label": "Repositories"
               },
               {
                 "stat": "commits",
                 "icon": "🔁",
-                "value": "997",
+                "value": "867",
                 "label": "Commits"
               },
               {
                 "stat": "contributions",
                 "icon": "📅",
-                "value": "1,084",
+                "value": "933",
                 "label": "Contributions"
               },
               {
                 "stat": "languages",
                 "icon": "🧩",
-                "value": "21",
+                "value": "11",
                 "label": "Languages"
               }
             ]
@@ -215,36 +215,36 @@
     ],
     "languages": {
       "title": "Language Split",
-      "note": "Share of code by size across 70 repositories",
+      "note": "Share of code by size across 57 repositories",
       "items": [
         {
           "name": "JavaScript",
-          "percent": 43.7,
+          "percent": 58.4,
           "color": "#3987e5"
         },
         {
           "name": "HTML",
-          "percent": 18.3,
+          "percent": 16.4,
           "color": "#d95926"
         },
         {
-          "name": "Python",
-          "percent": 15,
-          "color": "#199e70"
-        },
-        {
           "name": "CSS",
-          "percent": 6.4,
+          "percent": 8.7,
           "color": "#c98500"
         },
         {
           "name": "TypeScript",
-          "percent": 5.8,
+          "percent": 7.9,
           "color": "#d55181"
         },
         {
+          "name": "Python",
+          "percent": 6.8,
+          "color": "#199e70"
+        },
+        {
           "name": "Other",
-          "percent": 10.8,
+          "percent": 1.8,
           "color": "#7a8783"
         }
       ]
