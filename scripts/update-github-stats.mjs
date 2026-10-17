@@ -29,7 +29,8 @@ const SPARE_COLORS = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#0
 // token can't see private ones, so a drop stops the run unless this is set
 // (the workflow's "allow_decrease" option on a manual run).
 const ALLOW_DECREASE = process.env.ALLOW_DECREASE === "true";
-const STATS_SWEEPS = 16;
+const STATS_SWEEPS = 6;              // ×30s of waiting for slow repos
+const COMMIT_FALLBACK_LIMIT = 1000;  // see statsFromCommits()
 
 if (!TOKEN) {
   fail("GH_STATS_TOKEN is not set. Add a read-only personal access token as a repository secret — see the workflow file.");
@@ -113,6 +114,25 @@ async function contributorStats(repo, attempts) {
   return null; // still computing
 }
 
+// Fallback for a repo whose contributor stats won't finish: sum the additions
+// and deletions of your own commits on the default branch (merge commits
+// skipped, as in GitHub's stats). One request per commit, so only for repos
+// with up to COMMIT_FALLBACK_LIMIT commits; returns null above that.
+async function statsFromCommits(repo) {
+  const shas = [];
+  for (let page = 1; ; page++) {
+    const batch = await gh(`/repos/${repo.full_name}/commits?author=${encodeURIComponent(LOGIN)}&per_page=100&page=${page}`);
+    shas.push(...batch.filter((c) => c.parents.length < 2).map((c) => c.sha));
+    if (shas.length > COMMIT_FALLBACK_LIMIT) return null;
+    if (batch.length < 100) break;
+  }
+  const commits = await pool(shas, 6, (sha) => gh(`/repos/${repo.full_name}/commits/${sha}`));
+  return commits.reduce(
+    (t, c) => ({ added: t.added + c.stats.additions, deleted: t.deleted + c.stats.deletions }),
+    { added: 0, deleted: 0 }
+  );
+}
+
 async function allTimeContributions() {
   const yearsQuery = `query($login:String!){user(login:$login){contributionsCollection{contributionYears}}}`;
   const years = (await gh("/graphql", { method: "POST", body: { query: yearsQuery, variables: { login: LOGIN } } }))
@@ -138,7 +158,7 @@ async function main() {
   console.log(`Counting ${repos.length} repos (${privateCount} private)…`);
 
   // Repos GitHub hasn't counted recently (or that the token can only now see)
-  // can take minutes, so sweep the stragglers every 30s for up to ~8 minutes.
+  // can take minutes, so sweep the stragglers every 30s for a few minutes.
   const stats = await pool(repos, 4, (r) => contributorStats(r, 3));
   for (let sweep = 0; sweep < STATS_SWEEPS; sweep++) {
     const waiting = repos.filter((_, i) => stats[i] === null);
@@ -147,6 +167,14 @@ async function main() {
     await sleep(30000);
     const again = await pool(waiting, 4, (r) => contributorStats(r, 1));
     waiting.forEach((r, j) => { stats[repos.indexOf(r)] = again[j]; });
+  }
+
+  // A repo that was pushed to recently (this site's own repo, typically) can
+  // stay "computing" for a long time. Add its commits up one by one instead.
+  for (const [i, repo] of repos.entries()) {
+    if (stats[i] !== null) continue;
+    stats[i] = await statsFromCommits(repo);
+    if (stats[i]) annotate("warning", `${repo.name}: GitHub's stats weren't ready, so its lines were added up from individual commits.`);
   }
   const pending = repos.filter((_, i) => stats[i] === null).map((r) => r.name);
   if (pending.length) fail(`GitHub was still computing stats for: ${pending.join(", ")}. Nothing written — run it again in a few minutes.`);
