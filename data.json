@@ -174,9 +174,9 @@
   },
   "projects": {
     "highlight": {
-      "value": "1,106,245",
+      "value": "1,159,832",
       "label": "Lines of Code Added",
-      "detail": "<strong>99,457 removed</strong> • <strong>1,006,788 net</strong> across 74 repositories"
+      "detail": "<strong>100,418 removed</strong> • <strong>1,059,414 net</strong> across 76 repositories"
     },
     "sections": [
       {
@@ -187,26 +187,26 @@
               {
                 "stat": "repos",
                 "icon": "📦",
-                "value": "74",
+                "value": "76",
                 "label": "Repositories"
               },
               {
                 "stat": "commits",
                 "icon": "🔁",
-                "value": "1,029",
+                "value": "1,081",
                 "label": "Commits"
               },
               {
                 "stat": "contributions",
                 "icon": "📅",
-                "value": "1,108",
+                "value": "1,154",
                 "label": "Contributions",
                 "offset": 143
               },
               {
                 "stat": "languages",
                 "icon": "🧩",
-                "value": "23",
+                "value": "24",
                 "label": "Languages"
               }
             ]
@@ -216,36 +216,36 @@
     ],
     "languages": {
       "title": "Language Split",
-      "note": "Share of code by size across 74 repositories",
+      "note": "Share of code by size across 76 repositories",
       "items": [
         {
           "name": "JavaScript",
-          "percent": 44.1,
+          "percent": 43.8,
           "color": "#3987e5"
         },
         {
           "name": "HTML",
-          "percent": 18.2,
+          "percent": 17.6,
           "color": "#d95926"
         },
         {
           "name": "Python",
-          "percent": 14.9,
+          "percent": 14.4,
           "color": "#199e70"
         },
         {
-          "name": "CSS",
-          "percent": 6.4,
-          "color": "#c98500"
-        },
-        {
           "name": "TypeScript",
-          "percent": 5.7,
+          "percent": 7,
           "color": "#d55181"
         },
         {
+          "name": "CSS",
+          "percent": 6.3,
+          "color": "#c98500"
+        },
+        {
           "name": "Other",
-          "percent": 10.7,
+          "percent": 10.9,
           "color": "#7a8783"
         }
       ]
