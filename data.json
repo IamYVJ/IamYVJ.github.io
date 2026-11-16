@@ -174,9 +174,9 @@
   },
   "projects": {
     "highlight": {
-      "value": "1,228,317",
+      "value": "1,317,427",
       "label": "Lines of Code Added",
-      "detail": "<strong>101,009 removed</strong> • <strong>1,127,308 net</strong> across 80 repositories"
+      "detail": "<strong>116,384 removed</strong> • <strong>1,201,043 net</strong> across 83 repositories"
     },
     "sections": [
       {
@@ -187,19 +187,19 @@
               {
                 "stat": "repos",
                 "icon": "📦",
-                "value": "80",
+                "value": "83",
                 "label": "Repositories"
               },
               {
                 "stat": "commits",
                 "icon": "🔁",
-                "value": "1,105",
+                "value": "1,186",
                 "label": "Commits"
               },
               {
                 "stat": "contributions",
                 "icon": "📅",
-                "value": "1,178",
+                "value": "1,255",
                 "label": "Contributions",
                 "offset": 143
               },
@@ -216,36 +216,36 @@
     ],
     "languages": {
       "title": "Language Split",
-      "note": "Share of code by size across 80 repositories",
+      "note": "Share of code by size across 83 repositories",
       "items": [
         {
           "name": "JavaScript",
-          "percent": 44.1,
+          "percent": 44.8,
           "color": "#3987e5"
         },
         {
           "name": "HTML",
-          "percent": 17.5,
+          "percent": 17.3,
           "color": "#d95926"
         },
         {
           "name": "Python",
-          "percent": 14.4,
+          "percent": 14.1,
           "color": "#199e70"
         },
         {
           "name": "TypeScript",
-          "percent": 6.8,
+          "percent": 6.7,
           "color": "#d55181"
         },
         {
           "name": "CSS",
-          "percent": 6.3,
+          "percent": 6.5,
           "color": "#c98500"
         },
         {
           "name": "Other",
-          "percent": 10.9,
+          "percent": 10.6,
           "color": "#7a8783"
         }
       ]
